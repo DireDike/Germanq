@@ -1,96 +1,1024 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GermanQuest A1→B2</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deutsch / Night City</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font:17px system-ui,sans-serif;background:#0b111d;color:#eaf1fb}
-#app{max-width:760px;margin:auto;padding:16px}h1{margin:.2em 0}.mut{color:#8fa6c4}
-.card{background:#16233a;border:1px solid #2a3d5e;border-radius:14px;padding:16px;margin:12px 0}
-button{background:#1d4ed8;color:#fff;border:0;border-radius:10px;padding:10px 16px;font-size:16px;margin:4px;cursor:pointer}
-button.g{background:#2a3d5e}
-input{width:100%;padding:12px;font-size:18px;border-radius:10px;border:1px solid #2a3d5e;background:#0b111d;color:#fff}
-.bar{height:10px;background:#2a3d5e;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:#ffc857}
-.stats{display:flex;gap:10px;flex-wrap:wrap}.stats div{flex:1;min-width:110px;background:#101a2b;border-radius:10px;padding:10px;text-align:center}
-.big{font-size:26px;font-weight:700}.tile{background:#2a3d5e}
-</style></head><body><div id="app"></div>
+:root{
+  color-scheme:dark;
+  --bg:#090d16;--panel:#141e2e;--line:#2d3b50;
+  --ink:#edf4ff;--muted:#a6b6cc;--lime:#c3ff69;
+  --blue:#7ad8ff;--red:#ff9baf
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);
+  background:radial-gradient(ellipse at top right,#19364990,transparent 65%),var(--bg);
+  font:16px/1.6 system-ui,sans-serif
+}
+header,main,footer{max-width:1100px;margin:auto;padding:24px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-weight:950;letter-spacing:2px;font-size:20px}
+.brand span{color:var(--lime)}
+.tag{font:12px ui-monospace,monospace;letter-spacing:2px;text-transform:uppercase;color:var(--blue)}
+nav,.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+nav{margin-bottom:24px}
+button,input,select,textarea{font:inherit}
+button,.file{
+  background:#1c2b40;border:1px solid var(--line);color:var(--ink);
+  border-radius:12px;padding:11px 16px;cursor:pointer;display:inline-block
+}
+button:hover,.file:hover{border-color:var(--blue)}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:3px solid var(--blue);outline-offset:3px
+}
+.primary{background:var(--lime);border-color:var(--lime);color:#14220a;font-weight:800}
+.danger{color:var(--red)}
+.panel{
+  background:linear-gradient(135deg,#19263a,#101827);
+  border:1px solid var(--line);border-radius:23px;padding:25px;margin-bottom:20px
+}
+.grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}
+h1{font-size:clamp(36px,6vw,66px);line-height:1.06;letter-spacing:-2px;margin:18px 0 26px}
+h2{font-size:27px;line-height:1.25}
+.muted,small{color:var(--muted)}
+.big{font-size:clamp(23px,3vw,34px);line-height:1.5}
+.badge{
+  display:inline-block;background:#20344a;color:var(--blue);
+  border-radius:7px;padding:4px 9px;font-size:12px;margin:3px
+}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.stat{border:1px solid var(--line);padding:16px;border-radius:14px}
+.stat b{font-size:28px;color:var(--lime);display:block}
+progress{width:100%;height:11px;accent-color:var(--lime)}
+input[type=text],input[type=date],select,textarea{
+  background:#0a1220;color:var(--ink);border:1px solid var(--line);
+  border-radius:12px;padding:12px
+}
+textarea,input[type=text]{width:100%}
+textarea{min-height:145px;resize:vertical}
+label{display:block;margin:13px 0}
+.answer{background:#090f1c;border:1px solid var(--line);border-radius:15px;padding:18px;margin:18px 0}
+.correct{border-color:var(--lime)}
+.wrong{border-color:var(--red)}
+.tiles button{margin:4px}
+.map{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+.map button{padding:12px 3px}
+.map .done{background:#284527;border-color:#94c85a}
+.map .active{outline:2px solid var(--blue)}
+.list{max-height:520px;overflow:auto}
+.line{border-bottom:1px solid var(--line);padding:15px 0}
+details{margin:15px 0}
+summary{cursor:pointer;color:var(--blue)}
+.hidden{display:none!important}
+.warning{color:#ffd48c}
+a{color:var(--blue)}
+footer{font-size:13px;color:var(--muted)}
+#toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:var(--lime);color:#14220a;border-radius:12px;padding:13px 20px;
+  max-width:90vw;z-index:20;font-weight:700
+}
+@media(max-width:750px){
+  .grid{grid-template-columns:1fr}
+  .map{grid-template-columns:repeat(5,1fr)}
+  header,main,footer{padding:16px}
+  .panel{padding:20px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">DEUTSCH <span>/ NIGHT CITY</span>
+    <div class="tag">120 days. A thousand small wins.</div>
+  </div>
+  <div id="hud"></div>
+</header>
+
+<main>
+<nav aria-label="Main navigation">
+  <button data-view="home">⌂ Base</button>
+  <button data-view="map">◇ World map</button>
+  <button data-view="lab">↗ Output lab</button>
+  <button data-view="vault">▤ Phrase vault</button>
+  <button data-view="system">⚙ System</button>
+</nav>
+<div id="app"></div>
+</main>
+
+<footer>
+Local-first · No accounts · No ads · No external libraries.
+XP measures practice, not CEFR proficiency.
+</footer>
+<div id="toast" class="hidden" role="status"></div>
+
 <script>
-const L=[ // [level, German, English]
-["A1","Hallo, ich heiße Anna.","Hello, my name is Anna."],["A1","Wie geht es dir?","How are you?"],["A1","Mir geht es gut, danke.","I am fine, thanks."],
-["A1","Ich komme aus England.","I come from England."],["A1","Ich wohne in Berlin.","I live in Berlin."],["A1","Das ist mein Bruder.","That is my brother."],
-["A1","Ich trinke gern Kaffee.","I like drinking coffee."],["A1","Wo ist der Bahnhof?","Where is the train station?"],["A1","Ich habe einen Hund.","I have a dog."],
-["A1","Wie viel kostet das?","How much does that cost?"],["A1","Ich bin müde.","I am tired."],["A1","Heute ist Montag.","Today is Monday."],
-["A1","Ich lerne Deutsch.","I am learning German."],["A1","Wir essen um sieben Uhr.","We eat at seven o'clock."],["A1","Das Wetter ist schön.","The weather is nice."],
-["A1","Ich brauche Hilfe.","I need help."],["A1","Sprechen Sie Englisch?","Do you speak English?"],["A1","Ich verstehe das nicht.","I don't understand that."],
-["A1","Meine Mutter arbeitet viel.","My mother works a lot."],["A1","Der Tisch ist groß.","The table is big."],
-["A2","Gestern bin ich ins Kino gegangen.","Yesterday I went to the cinema."],["A2","Ich habe den Film schon gesehen.","I have already seen the film."],
-["A2","Kannst du mir helfen?","Can you help me?"],["A2","Ich muss morgen früh aufstehen.","I have to get up early tomorrow."],
-["A2","Wir fahren mit dem Zug nach München.","We are going to Munich by train."],["A2","Ich gebe dem Kind das Buch.","I give the child the book."],
-["A2","Weil ich krank war, bin ich zu Hause geblieben.","Because I was sick, I stayed at home."],["A2","Das Restaurant ist neben der Bank.","The restaurant is next to the bank."],
-["A2","Ich interessiere mich für Musik.","I am interested in music."],["A2","Er ist größer als sein Bruder.","He is taller than his brother."],
-["A2","Ich würde gern ein Zimmer reservieren.","I would like to book a room."],["A2","Ruf mich bitte heute Abend an.","Please call me this evening."],
-["A2","Als Kind wohnte ich auf dem Land.","As a child I lived in the countryside."],["A2","Ich freue mich auf das Wochenende.","I am looking forward to the weekend."],
-["A2","Ich habe keine Zeit, weil ich arbeiten muss.","I have no time because I have to work."],["A2","Zieh dir eine Jacke an!","Put on a jacket!"],
-["B1","Wenn ich Zeit hätte, würde ich mehr reisen.","If I had time, I would travel more."],["B1","Das Buch, das ich lese, ist spannend.","The book that I am reading is exciting."],
-["B1","Obwohl es regnete, sind wir spazieren gegangen.","Although it was raining, we went for a walk."],["B1","Ich habe vergessen, die Tür abzuschließen.","I forgot to lock the door."],
-["B1","Das Haus wird gerade renoviert.","The house is being renovated right now."],["B1","Nachdem wir gegessen hatten, gingen wir nach Hause.","After we had eaten, we went home."],
-["B1","Es lohnt sich, Deutsch zu lernen.","It is worth learning German."],["B1","Ich bin mir nicht sicher, ob er kommt.","I am not sure whether he is coming."],
-["B1","Je mehr ich übe, desto besser spreche ich.","The more I practise, the better I speak."],["B1","Ich hätte dich anrufen sollen.","I should have called you."],
-["B1","Trotz des Regens fand das Konzert statt.","Despite the rain, the concert took place."],["B1","Ich beschäftige mich mit Geschichte.","I occupy myself with history."],
-["B1","Sie tut so, als ob sie nichts wüsste.","She acts as if she knew nothing."],["B1","Damit ich pünktlich bin, nehme ich ein Taxi.","So that I am on time, I take a taxi."],
-["B2","Der Vertrag muss bis Freitag unterschrieben worden sein.","The contract must have been signed by Friday."],
-["B2","Angesichts der Lage sollten wir abwarten.","In view of the situation we should wait."],["B2","Er soll sehr reich sein.","He is said to be very rich."],
-["B2","Die Entscheidung ist noch nicht gefallen.","The decision has not yet been made."],["B2","Es kommt darauf an, wie man es betrachtet.","It depends on how you look at it."],
-["B2","Hätte ich das gewusst, wäre ich gekommen.","Had I known that, I would have come."],["B2","Die zu erledigenden Aufgaben liegen auf dem Tisch.","The tasks to be done are on the table."],
-["B2","Er behauptete, er sei krank gewesen.","He claimed he had been ill."],["B2","Im Gegensatz zu früher arbeiten viele im Homeoffice.","In contrast to the past, many work from home."],
-["B2","Ich lege großen Wert auf Ehrlichkeit.","I place great value on honesty."],["B2","Dieses Problem lässt sich leicht lösen.","This problem can easily be solved."],
-["B2","Kaum war er angekommen, fing es an zu regnen.","Hardly had he arrived when it started to rain."],["B2","Es ist fraglich, inwiefern das stimmt.","It is questionable to what extent that is true."]
+"use strict";
+
+/* Import your full curriculum in System.
+   The downloadable full edition already embeds all 3,600 pairs. */
+const STARTER = [{
+  n:1,
+  title:"The Morning Routine — preview; import your TXT for all 120 days",
+  pairs:[
+    ["Good morning! Did you sleep well?",
+     "Guten Morgen! Hast du gut geschlafen?"],
+    ["Good morning! Yes, very well, thanks. And you?",
+     "Guten Morgen! Ja, sehr gut, danke. Und du?"],
+    ["Not so well. My alarm rang at six o'clock.",
+     "Nicht so gut. Mein Wecker hat um sechs Uhr geklingelt."],
+    ["Why do you get up so early?",
+     "Warum stehst du so früh auf?"],
+    ["I start work at half past seven.",
+     "Ich fange um halb acht mit der Arbeit an."],
+    ["First I take a shower, then I get dressed.",
+     "Zuerst dusche ich, dann ziehe ich mich an."]
+  ]
+}];
+
+const $ = s => document.querySelector(s);
+const KEY = "deutsch-night-city-compact-v1";
+const DAY = 86400000;
+
+const escapeHTML = value => String(value).replace(
+  /[&<>"']/g,
+  c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])
+);
+const E = escapeHTML;
+
+function today(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function fresh(){
+  return {
+    v:1,start:today(),day:1,xp:0,goal:6,
+    cards:{},activity:{},awards:{},notes:{},checks:[],
+    rate:.85,voice:"",data:STARTER
+  };
+}
+
+let S = fresh(), storageOK = true;
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+  if(saved && saved.v===1 && validData(saved.data)){
+    S = {...fresh(),...saved};
+  }
+} catch(e) { storageOK=false; }
+
+let view="home", run=null, voices=[], timer=0, toastTimeout;
+
+function validData(data){
+  return Array.isArray(data) && data.length>0 && data.length<=365 &&
+    new Set(data.map(d=>d.n)).size===data.length &&
+    data.every(d =>
+      Number.isInteger(d.n) && d.n>0 &&
+      typeof d.title==="string" &&
+      Array.isArray(d.pairs) && d.pairs.length>0 && d.pairs.length<=100 &&
+      d.pairs.every(p =>
+        Array.isArray(p) && p.length===2 &&
+        p.every(t => typeof t==="string" && t.length>0 && t.length<5000)
+      )
+    );
+}
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify(S));
+    storageOK=true;
+  }catch(e){
+    storageOK=false;
+    toast("Storage unavailable or full. Export a backup now.");
+  }
+}
+function toast(text){
+  $("#toast").textContent=text;
+  $("#toast").classList.remove("hidden");
+  clearTimeout(toastTimeout);
+  toastTimeout=setTimeout(()=>$("#toast").classList.add("hidden"),4500);
+}
+function cards(){
+  return S.data.flatMap(d => d.pairs.map((p,i)=>({
+    id:`${d.n}.${i}`,day:d.n,en:p[0],de:p[1]
+  })));
+}
+function currentDay(){
+  return S.data.find(d=>d.n===S.day) || S.data[0];
+}
+function introduced(d){
+  return d.pairs.filter((_,i)=>S.cards[`${d.n}.${i}`]).length;
+}
+function due(){
+  return cards().filter(c=>S.cards[c.id] && S.cards[c.id].due<=Date.now());
+}
+function band(){
+  return Math.min(3,Math.floor((S.day-1)/30));
+}
+function shuffle(items){
+  const a=items.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function normalize(text){
+  return text.normalize("NFC").toLowerCase()
+    .replace(/ä/g,"ae").replace(/ö/g,"oe")
+    .replace(/ü/g,"ue").replace(/ß/g,"ss")
+    .replace(/[^\p{L}\p{N}\s]/gu," ")
+    .replace(/\s+/g," ").trim();
+}
+function activity(){
+  S.activity[today()]=(S.activity[today()]||0)+1;
+}
+function streak(){
+  let date=new Date(),n=0;
+  if(!S.activity[today()]) date.setDate(date.getDate()-1);
+  for(let i=0;i<5000;i++){
+    const key=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+    if(!S.activity[key]) break;
+    n++;date.setDate(date.getDate()-1);
+  }
+  return n;
+}
+function shell(html){
+  $("#hud").innerHTML=`
+    <span class="badge">LV ${1+Math.floor(S.xp/250)} · ${S.xp} XP</span>
+    <span class="badge">${streak()} day rhythm</span>
+    <span class="badge">${due().length} due</span>`;
+  $("#app").innerHTML=html;
+}
+function go(next){
+  if(run && !confirm("Leave this run? Completed reviews are saved.")) return;
+  if(view==="lab" && dirtyDraft() &&
+     !confirm("Leave your unsaved draft? Press Cancel to save it first.")) return;
+  run=null;view=next;render();
+}
+function render(){
+  if(view==="home") home();
+  if(view==="map") worldMap();
+  if(view==="lab") lab();
+  if(view==="vault") vault();
+  if(view==="system") system();
+  if(view==="play") play();
+}
+
+function home(){
+  const d=currentDay(),n=due().length;
+  const names=[
+    "A1 / foundations","A2 / everyday life",
+    "B1 / independent voice","B2 / complex-topic practice"
+  ];
+  shell(`
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <div class="tag">District ${band()+1} · ${names[band()]}</div>
+        <h1>Build a voice.<br>Not just a streak.</h1>
+        <p class="muted">Mission ${d.n} · ${E(d.title)}</p>
+        <progress value="${introduced(d)}" max="${d.pairs.length}"></progress>
+        <p>${introduced(d)} / ${d.pairs.length} phrases introduced.</p>
+        <div class="row">
+          <button class="primary" data-action="mission">▶ Enter mission</button>
+          <button data-action="review" ${n?"":"disabled"}>Review ${n} due</button>
+          <button data-action="checkpoint">⚔ Recall checkpoint</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>${Object.keys(S.cards).length}</b><small>introduced</small></div>
+        <div class="stat"><b>${Object.values(S.cards).filter(c=>c.interval>=21).length}</b><small>21+ day interval</small></div>
+        <div class="stat"><b>${S.activity[today()]||0}</b><small>retrievals today</small></div>
+      </div>
+      <div class="panel">
+        <h2>The real-world loadout</h2>
+        <p>① 20–40 min retrieval + noticing<br>
+        ② 30–60 min understandable listening / reading<br>
+        ③ 15–30 min speaking with feedback<br>
+        ④ 15–30 min writing + correction</p>
+        <p class="muted">These are starting blocks, not a guaranteed B2 dose.
+        An intensive four-month target may require several focused hours daily,
+        expert support, and far more input than this game contains.</p>
+        <button data-view="lab">Open output lab →</button>
+      </div>
+    </div>
+    <aside>
+      <div class="panel">
+        <div class="tag">Your next move</div>
+        <h2>Recall → repair → reuse.</h2>
+        <p>No lives to lose. Mistakes bring a phrase back sooner.
+        Old phrases mix with new ones.</p>
+        <label>New phrases per run
+          <select id="goal">
+            <option value="6">6 · focused</option>
+            <option value="12">12 · intensive</option>
+            <option value="30">30 · full dialogue</option>
+          </select>
+        </label>
+        <p class="muted">${S.data.length} days / ${cards().length} phrases loaded.
+        Six phrases daily alone will not finish a 30-phrase daily curriculum
+        in 120 days.</p>
+        <button data-action="focus">◷ Start 25-minute focus block</button>
+        <p id="timer" class="tag"></p>
+      </div>
+      <div class="panel">
+        <h3>No fake certificates.</h3>
+        <p>The district labels are topic bands—not validated CEFR levels.
+        Some early sentences already contain advanced forms.</p>
+        <p class="muted">Take an independent assessment monthly.
+        Extend the timeline when necessary.</p>
+      </div>
+    </aside>
+  </div>`);
+  $("#goal").value=S.goal;
+  $("#goal").onchange=e=>{S.goal=+e.target.value;save()};
+  tick();
+}
+
+function worldMap(){
+  shell(`
+    <div class="panel">
+      <div class="tag">The campaign</div>
+      <h1>120 nights.<br>One new voice.</h1>
+      <p class="muted">Choose any mission. Green means every phrase has been
+      introduced—not mastered. Import your TXT in System to load all days.</p>
+      <div class="map">
+      ${S.data.map(d=>`
+        <button data-day="${d.n}"
+          class="${introduced(d)===d.pairs.length?"done":""} ${d.n===S.day?"active":""}"
+          title="${E(d.title)}"
+          aria-label="Day ${d.n}: ${E(d.title)}">${d.n}</button>
+      `).join("")}
+      </div>
+    </div>`);
+}
+
+/* New phrases: understand -> reconstruct -> retrieve.
+   Due phrases: retrieve immediately.
+   Checkpoints: no hints, no scheduler changes. */
+function start(kind){
+  let queue=[];
+  const all=cards();
+  if(kind==="checkpoint"){
+    queue=shuffle(all.filter(c=>S.cards[c.id]))
+      .slice(0,12).map(c=>({...c,mode:"test"}));
+    if(queue.length<3){
+      toast("Introduce at least 3 phrases before a checkpoint.");
+      return;
+    }
+  } else {
+    queue=due()
+      .sort((a,b)=>S.cards[a.id].due-S.cards[b.id].due)
+      .slice(0,kind==="review"?30:10)
+      .map((c,i)=>({...c,mode:i%3===2?"listen":"recall"}));
+    if(kind==="mission"){
+      queue.push(...all
+        .filter(c=>c.day===S.day&&!S.cards[c.id])
+        .slice(0,S.goal)
+        .map(c=>({...c,mode:"learn"})));
+    }
+  }
+  if(!queue.length){
+    toast("Nothing due or new here. Choose another day or use the output lab.");
+    return;
+  }
+  run={kind,queue,i:0,step:"",hits:0,total:0,assisted:false,feedback:null};
+  view="play";play();
+}
+
+function play(){
+  if(run.i>=run.queue.length){finish();return}
+  const c=run.queue[run.i];
+  if(!run.step){
+    run.step=c.mode==="learn"?"study":"type";
+    run.assisted=false;run.feedback=null;
+  }
+  const study=run.step==="study";
+  const build=run.step==="build";
+  const listen=c.mode==="listen" && run.step==="type";
+
+  shell(`
+    <div class="row">
+      <span class="badge">${run.kind==="checkpoint"?"RECALL CHECKPOINT":"MISSION RUN"}</span>
+      <span class="muted">${run.i+1} / ${run.queue.length} · Day ${c.day}</span>
+    </div>
+    <progress value="${run.i}" max="${run.queue.length}"></progress>
+    <div class="panel" style="margin-top:20px">
+      <div class="tag">${study?"01 / notice":build?"02 / reconstruct":"03 / retrieve"}</div>
+      <h2>${study?"Make meaning first.":build?"Put it back together.":listen?"What did you hear?":"Say it. Then type it."}</h2>
+      ${listen
+        ? `<p class="muted">Audio needs an installed local German voice.
+           Text retrieval is always available.</p>`
+        : `<p class="big">${E(c.en)}</p>`}
+      ${study ? `
+        <div class="answer big" lang="de">${E(c.de)}</div>
+        <p class="muted">Read for meaning. Notice the verb and useful chunks.
+        Listen if available, then say it aloud.</p>
+        <div class="row">
+          <button data-action="speak">▶ German audio</button>
+          <button class="primary" data-action="build">Hide & reconstruct →</button>
+        </div>
+      ` : build ? `
+        <div id="built" class="answer big" lang="de"></div>
+        <div id="tiles" class="tiles"></div>
+        <div class="row">
+          <button data-action="undo">Undo</button>
+          <button class="primary" data-action="buildcheck">Check order</button>
+        </div>
+        <p id="buildmsg" role="status"></p>
+      ` : `
+        ${listen?`
+          <div class="row">
+            <button data-action="speak">▶ Play / replay</button>
+            <button data-action="textmode">Use English prompt instead</button>
+          </div>`:""}
+        <form id="answerform">
+          <label for="answer">Your German
+            <small>· case/punctuation ignored; ae, oe, ue, ss accepted</small>
+          </label>
+          <textarea id="answer" lang="de" spellcheck="false"
+            autocomplete="off" autocapitalize="off"
+            placeholder="Retrieve before revealing…"></textarea>
+          <div class="row">
+            <button type="submit" class="primary">Check recall</button>
+            ${run.kind!=="checkpoint"?`
+              <button type="button" data-action="hint">First-word hint</button>
+              <button type="button" data-action="reveal">I don't know yet</button>
+            `:""}
+          </div>
+        </form>
+        <p id="hint" class="muted"></p>
+        <div id="feedback" aria-live="polite"></div>
+      `}
+    </div>
+    <p class="muted">The checker matches a model sentence, not every valid German
+    translation. A mismatch may still be valid. Compare meaning and form;
+    ask a teacher when unsure. The scheduler treats mismatches conservatively.</p>
+  `);
+
+  if(build){
+    run.tokens=shuffle(c.de.split(/\s+/).map((text,id)=>({text,id})));
+    run.chosen=[];drawTiles();
+  }
+  if(!study&&!build){
+    $("#answerform").onsubmit=e=>{e.preventDefault();check(false)};
+    $("#answer").focus();
+  }
+}
+
+function drawTiles(){
+  $("#built").textContent=run.chosen.map(i=>run.tokens[i].text).join(" ") || "…";
+  $("#tiles").innerHTML=run.tokens.map((t,i)=>`
+    <button data-token="${i}" lang="de"
+      ${run.chosen.includes(i)?"disabled":""}>${E(t.text)}</button>
+  `).join("");
+}
+
+function check(reveal){
+  if(run.feedback) return;
+  const c=run.queue[run.i],raw=$("#answer").value;
+  if(!raw.trim()&&!reveal){toast("Try a sentence, or choose “I don't know yet”.");return}
+  const exact=!reveal && normalize(raw)===normalize(c.de);
+  run.feedback={raw,exact};
+  $("#answer").disabled=true;
+  $("#answerform").querySelectorAll("button").forEach(b=>b.disabled=true);
+
+  const found=new Set(normalize(raw).split(" "));
+  const comparison=c.de.split(/\s+/).map(word=>`
+    <span style="${found.has(normalize(word))?"":"color:var(--red);text-decoration:underline"}">
+      ${E(word)}
+    </span>`).join(" ");
+
+  $("#feedback").innerHTML=`
+    <div class="answer ${exact?"correct":"wrong"}">
+      <b>${exact?"✓ Model recalled.":"↻ Compare, repair, revisit."}</b>
+      <p class="big" lang="de">${E(c.de)}</p>
+      ${raw?`<p class="muted">You wrote: ${E(raw)}</p>`:""}
+      ${!exact?`
+        <p lang="de">${comparison}</p>
+        <p class="muted">Highlighted model words were not found in your answer.
+        This is not a grammar diagnosis. Check word order, articles and endings.</p>
+      `:""}
+      <div class="row">
+        <button data-action="speak">▶ Hear model</button>
+        ${run.kind==="checkpoint"
+          ? `<button class="primary" data-grade="test">Next →</button>`
+          : exact&&!run.assisted
+            ? `<button data-grade="hard">Hard · sooner</button>
+               <button class="primary" data-grade="good">Good</button>
+               <button data-grade="easy">Easy · later</button>`
+            : `<button class="primary" data-grade="again">Repair & continue →</button>`
+        }
+      </div>
+    </div>`;
+}
+
+/* Simple adaptive spacing heuristic; not a calibrated memory model. */
+function grade(rating){
+  if(!run.feedback) return;
+  const c=run.queue[run.i],f=run.feedback,now=Date.now();
+  run.total++;
+  if(f.exact&&!run.assisted) run.hits++;
+
+  if(run.kind!=="checkpoint"){
+    const old=S.cards[c.id] || {interval:0,ease:2.3,reps:0,lapses:0};
+    const next={...old};
+
+    if(rating==="again"){
+      next.interval=0;
+      next.due=now+120000;
+      next.lapses++;
+      next.ease=Math.max(1.3,next.ease-.2);
+
+      if(!c.retry){
+        run.queue.splice(Math.min(run.i+4,run.queue.length),0,{
+          ...c,mode:"recall",retry:true
+        });
+      }
+    } else {
+      next.reps++;
+      if(rating==="hard"){
+        next.interval=old.interval?Math.max(1,old.interval*1.2):.5;
+        next.ease=Math.max(1.3,next.ease-.1);
+      }
+      if(rating==="good"){
+        next.interval=old.interval?Math.max(1,old.interval*next.ease):1;
+      }
+      if(rating==="easy"){
+        next.interval=old.interval?Math.max(3,old.interval*next.ease*1.3):3;
+        next.ease=Math.min(3,next.ease+.1);
+      }
+      next.interval=Math.min(180,Math.round(next.interval*100)/100);
+      next.due=now+next.interval*DAY;
+    }
+
+    next.last=now;S.cards[c.id]=next;
+
+    // XP cannot be farmed by repeatedly reviewing the same phrase that day.
+    const award=today()+":"+c.id;
+    if(!S.awards[award]){
+      S.awards[award]=true;
+      S.xp+=rating==="again"?4:12;
+    }
+    activity();save();
+  }
+
+  run.i++;run.step="";run.feedback=null;play();
+}
+
+function finish(){
+  const result=run;
+  const score=Math.round(100*result.hits/Math.max(1,result.total));
+
+  if(result.kind==="checkpoint"){
+    S.checks.push({date:today(),score,n:result.total});
+    S.checks=S.checks.slice(-60);
+    activity();save();
+  }
+
+  run=null;view="home";
+  shell(`
+    <div class="panel">
+      <div class="tag">Run complete</div>
+      <h1>Another brick<br>in your German.</h1>
+      <p class="big">${result.hits} / ${result.total} unassisted model recalls</p>
+      <p class="muted">${result.kind==="checkpoint"
+        ? "This sampled recall checkpoint is not a CEFR assessment."
+        : "Includes new-item practice and any repair retries. Session performance is not long-term retention."}
+      </p>
+      <div class="row">
+        <button class="primary" data-action="mission">Another batch</button>
+        <button data-view="lab">Use it in your own words</button>
+        <button data-action="nextday">Next mission →</button>
+        <button data-view="home">Return to base</button>
+      </div>
+    </div>`);
+}
+
+const SCAFFOLDS=[
+  {
+    title:"Foundations",
+    grammar:"Statements usually place the finite verb second: Heute lerne ich Deutsch. Learn nouns with their articles and plurals. Separable prefixes can go last: Ich stehe früh auf.",
+    task:"Introduce yourself and describe your routine. Ask five questions. Change the time, place and person in three phrases.",
+    target:"40–70 words / 1 minute speaking"
+  },
+  {
+    title:"Everyday life",
+    grammar:"Perfekt often uses haben/sein plus a participle: Ich bin gefahren. Modal verbs send the infinitive to the end: Ich muss arbeiten. With weil, the finite verb goes last.",
+    task:"Retell a real event and plan a trip. Include who, when, where, a problem and a solution.",
+    target:"70–110 words / 2 minutes speaking"
+  },
+  {
+    title:"Independent voice",
+    grammar:"Connect ideas with weil, dass and obwohl. Try polite Konjunktiv II: Könnten Sie mir helfen? Explain causes, contrasts and consequences.",
+    task:"Give an opinion with two reasons, acknowledge an opposing view, then respond. Reuse today's chunks in a new situation.",
+    target:"120–160 words / 3 minutes speaking"
+  },
+  {
+    title:"Complex-topic practice",
+    grammar:"Try Einerseits … andererseits … and zwar … aber … . Passive foregrounds actions: Die Daten werden gespeichert. Distinguish claims, evidence and limitations.",
+    task:"Argue both sides of today's issue, evaluate a counterargument and propose a compromise. Summarize an authentic article without copying.",
+    target:"180–250 words / 4 minutes speaking"
+  }
 ];
-const PHASE=d=>d<=30?"A1":d<=60?"A2":d<=90?"B1":"B2", LV=["A1","A2","B1","B2"], NEW_PER_DAY=8, IV=[0,1,3,7,14,30,60,120];
-let S=JSON.parse(localStorage.gq||"null")||{start:Date.now(),cards:{},xp:0,streak:0,last:""};
-const save=()=>localStorage.gq=JSON.stringify(S), today=()=>new Date().toISOString().slice(0,10);
-const day=()=>Math.min(120,Math.floor((Date.now()-S.start)/864e5)+1), $=id=>document.getElementById(id), A=document.getElementById("app");
-const norm=s=>s.toLowerCase().replace(/[.,!?;:'"]/g,"").replace(/ß/g,"ss").replace(/\s+/g," ").trim();
-function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
-function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
-function queue(){const now=Date.now(),max=LV.indexOf(PHASE(day())),due=[],fresh=[];
- L.forEach((x,i)=>{const c=S.cards[i];if(c){if(c.due<=now)due.push(i)}else if(LV.indexOf(x[0])<=max)fresh.push(i)});
- const introduced=Object.values(S.cards).filter(c=>c.d===today()).length;
- return shuffle(due).concat(fresh.slice(0,Math.max(0,NEW_PER_DAY-introduced)))}
-function grade(i,ok){const c=S.cards[i]||{box:0,d:today()};c.box=ok?Math.min(IV.length-1,c.box+1):Math.max(1,c.box-2)||1;
- c.due=Date.now()+(ok?IV[c.box]*864e5:6e4);S.cards[i]=c;if(ok)S.xp+=10;
- if(S.last!==today()){const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=today()}save()}
-function home(){const d=day(),learned=Object.values(S.cards).filter(c=>c.box>=4).length,q=queue();
- A.innerHTML=`<h1>🇩🇪 GermanQuest</h1><p class=mut>Day ${d}/120 · Phase ${PHASE(d)} · target: B2 in 4 months</p>
- <div class=bar><i style="width:${d/1.2}%"></i></div>
- <div class="card stats"><div><div class=big>${S.xp}</div>XP</div><div><div class=big>🔥${S.streak}</div>streak</div>
- <div><div class=big>${learned}/${L.length}</div>mastered</div><div><div class=big>${q.length}</div>due today</div></div>
- <div class=card><b>Today's plan (~20–30 min):</b><br>1. Review due cards (spaced repetition)<br>2. Learn ${NEW_PER_DAY} new sentences<br>3. Listen & shadow each sentence aloud<br>4. Extra: 15 min German podcast/series (comprehensible input)</div>
- <button onclick="session()">▶ Start session</button><button class=g onclick="skip()">Unlock next phase</button><button class=g onclick="if(confirm('Reset all progress?')){localStorage.removeItem('gq');location.reload()}">Reset</button>`}
-function skip(){S.start-=30*864e5;save();home()}
-let Q=[],cur=0,ok=0;
-function session(){Q=queue().slice(0,25);cur=0;ok=0;if(!Q.length){A.innerHTML=`<div class=card><h2>✅ All done for today!</h2><p>Come back tomorrow — spacing beats cramming.</p><button onclick=home()>Home</button></div>`;return}next()}
-function next(){if(cur>=Q.length){A.innerHTML=`<div class=card><h2>Session complete 🎉</h2><p>${ok}/${Q.length} correct · +${ok*10} XP</p><button onclick=home()>Home</button></div>`;return}
- const i=Q[cur],[lv,de,en]=L[i],c=S.cards[i],t=!c?"intro":["type","build","listen","choice"][Math.random()*4|0];
- const head=`<p class=mut>${cur+1}/${Q.length} · ${lv}</p><div class=bar><i style="width:${cur/Q.length*100}%"></i></div>`;
- if(t==="intro"){speak(de);A.innerHTML=head+`<div class=card><p class=mut>New sentence — listen & repeat aloud 3×</p><h2>${de}</h2><p>${en}</p>
-  <button class=g onclick="speak('${de.replace(/'/g,"\\'")}')">🔊 Listen</button><button onclick="grade(${i},true);cur++;ok++;next()">Got it →</button></div>`;return}
- if(t==="choice"){const opts=shuffle([de,...shuffle(L.filter((x,j)=>j!==i&&x[0]===lv).map(x=>x[1])).slice(0,3)]);
-  A.innerHTML=head+`<div class=card><p class=mut>Choose the German for:</p><h2>${en}</h2>${opts.map(o=>`<div><button class=g style="width:100%;text-align:left">${o}</button></div>`).join("")}<div id=fb></div></div>`;
-  A.querySelectorAll(".card button").forEach(b=>b.onclick=()=>check(b.textContent===de,i,de,en));return}
- if(t==="build"){let words=de.replace(/[.,!?]/g,"").split(" "),built=[];
-  A.innerHTML=head+`<div class=card><p class=mut>Build the sentence (word order!):</p><h2>${en}</h2><div id=out style="min-height:44px;border-bottom:1px solid #2a3d5e"></div><div id=pool></div><button>Check</button><div id=fb></div></div>`;
-  const draw=()=>{$("out").innerHTML=built.map((w,k)=>`<button class=tile data-k=${k}>${w}</button>`).join("");
-   $("pool").innerHTML=pool.map((w,k)=>w?`<button class=tile data-p=${k}>${w}</button>`:"").join("");
-   $("out").querySelectorAll("button").forEach(b=>b.onclick=()=>{const w=built.splice(+b.dataset.k,1)[0];pool[pool.indexOf(null)]=w;draw()});
-   $("pool").querySelectorAll("button").forEach(b=>b.onclick=()=>{built.push(pool[+b.dataset.p]);pool[+b.dataset.p]=null;draw()})};
-  let pool=shuffle(words);draw();A.querySelector(".card>button").onclick=()=>check(norm(built.join(" "))===norm(de),i,de,en);return}
- if(t==="listen")speak(de);
- A.innerHTML=head+`<div class=card><p class=mut>${t==="listen"?"Dictation: type what you hear":"Translate into German:"}</p>
- <h2>${t==="listen"?`<button class=g onclick="speak('${de.replace(/'/g,"\\'")}')">🔊 Play again</button>`:en}</h2>
- <input id=ans autocomplete=off placeholder="Deutsch…"><p class=mut>ä ö ü ß: type ae oe ue ss if needed</p><button id=chk>Check</button><div id=fb></div></div>`;
- const go=()=>{const a=norm($("ans").value).replace(/ae/g,"ä").replace(/oe/g,"ö").replace(/ue/g,"ü"),b=norm(de);check(a===b||norm($("ans").value)===b.replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue"),i,de,en)};
- $("chk").onclick=go;$("ans").onkeydown=e=>{if(e.key==="Enter")go()};$("ans").focus()}
-function check(r,i,de,en){if($("fb").dataset.done)return;$("fb").dataset.done=1;grade(i,r);if(r)ok++;else if(Q.length<40)Q.push(i);speak(de);
- $("fb").innerHTML=`<p style="color:${r?"#4cd97b":"#ff6b6b"}">${r?"✔ Richtig!":"✘ Correct answer:"}</p><h3>${de}</h3><p class=mut>${en}</p><button id=nx>Next →</button>`;
- $("nx").onclick=()=>{cur++;next()};$("nx").focus()}
-home();
-</script></body></html>
+const RUBRIC=[
+  "I answered the task with original ideas.",
+  "I connected my ideas and gave examples.",
+  "I checked verbs, gender and endings.",
+  "I spoke aloud and repaired one weak spot.",
+  "A teacher or partner gave feedback; I saved a correction."
+];
+
+function lab(){
+  const d=currentDay(),t=SCAFFOLDS[band()],note=S.notes[S.day]||{};
+  shell(`
+    <div class="grid">
+      <div class="panel">
+        <div class="tag">Output lab / ${E(t.title)}</div>
+        <h1>Make it yours.</h1>
+        <h3>${E(d.title)}</h3>
+        <p>${E(t.task)}</p>
+        <p class="badge">${E(t.target)} · adjustable practice target, not an exam rule</p>
+        <label for="writing">Original German</label>
+        <textarea id="writing" lang="de" style="min-height:250px">${E(note.text||"")}</textarea>
+        <p id="wordcount" class="muted"></p>
+        <div class="row">
+          <button class="primary" data-action="savenote">Save draft</button>
+          <button data-action="speaktimer">Start speaking timer</button>
+        </div>
+        <p id="timer" class="tag"></p>
+        <h3>Honest self-check</h3>
+        ${RUBRIC.map((text,i)=>`
+          <label><input type="checkbox" data-rubric="${i}"
+          ${note.rubric?.[i]?"checked":""}> ${E(text)}</label>
+        `).join("")}
+        <label for="correction">Feedback + corrected version</label>
+        <textarea id="correction">${E(note.correction||"")}</textarea>
+        <button data-action="savenote">Save feedback</button>
+        <p class="muted">No automatic fluency score. Browser spelling hints
+        are not grammar feedback. Tomorrow, reproduce the corrected version
+        from memory.</p>
+      </div>
+      <aside>
+        <div class="panel">
+          <h3>Grammar lens</h3>
+          <p>${E(t.grammar)}</p>
+          <small>This is a scaffold, not a complete grammar course.
+          Ask why the form works; create three new variations.</small>
+        </div>
+        <div class="panel">
+          <h3>Dialogue rehearsal</h3>
+          <p>Read one line, hide the German, and answer as the other speaker.
+          Repeat with new details.</p>
+          <div class="list">
+          ${d.pairs.map(p=>`
+            <details><summary>${E(p[0])}</summary>
+            <p lang="de">${E(p[1])}</p></details>
+          `).join("")}
+          </div>
+        </div>
+      </aside>
+    </div>`);
+  $("#writing").oninput=()=>{
+    $("#wordcount").textContent=
+      ($("#writing").value.trim().match(/\S+/g)||[]).length+
+      " words · press Save to keep your draft";
+  };
+  $("#writing").oninput();tick();
+}
+function dirtyDraft(){
+  if(!$("#writing")) return false;
+  const note=S.notes[S.day]||{};
+  return $("#writing").value!==(note.text||"") ||
+    $("#correction").value!==(note.correction||"") ||
+    [...document.querySelectorAll("[data-rubric]")]
+      .some((el,i)=>el.checked!==!!note.rubric?.[i]);
+}
+function saveNote(){
+  S.notes[S.day]={
+    text:$("#writing").value,
+    correction:$("#correction").value,
+    rubric:[...document.querySelectorAll("[data-rubric]")].map(el=>el.checked)
+  };
+  save();toast("Draft and feedback saved locally.");
+}
+
+function vault(){
+  shell(`
+    <div class="panel">
+      <div class="tag">Phrase vault</div>
+      <h1>Notice the patterns.</h1>
+      <label>Search English or German
+        <input id="search" type="text" placeholder="Try: weil, coffee, hätte…">
+      </label>
+      <p class="muted">Browsing is input, not evidence of recall.</p>
+      <div id="results" class="list"></div>
+    </div>`);
+  $("#search").oninput=search;search();
+}
+function search(){
+  const query=$("#search").value.toLowerCase();
+  const found=cards().filter(c=>(c.en+" "+c.de).toLowerCase().includes(query));
+  $("#results").innerHTML=`
+    <p class="muted">${found.length} matches · first 80 shown</p>
+    ${found.slice(0,80).map(c=>`
+      <div class="line"><span class="badge">Day ${c.day}</span>
+      <span lang="de">${E(c.de)}</span><br><small>${E(c.en)}</small></div>
+    `).join("")}`;
+}
+
+function system(){
+  shell(`
+    <div class="grid">
+      <div class="panel">
+        <div class="tag">System / local-first</div>
+        <h2>Your data stays here.</h2>
+        <p>${S.data.length} days / ${cards().length} phrases loaded.</p>
+        <p class="${storageOK?"muted":"warning"}">
+        ${storageOK?"Local storage available.":"Storage unavailable: export before closing."}</p>
+        <p class="warning">Private browsing, clearing browser data, changing
+        file location, or switching to GitHub Pages can separate or remove
+        saved progress. Export backups often.</p>
+        <div class="row">
+          <button data-action="export">Export full backup</button>
+          <label class="file">Restore backup
+            <input id="backupfile" type="file" accept=".json" class="hidden">
+          </label>
+        </div>
+        <h3>Import curriculum TXT</h3>
+        <p>Use your original German_120_Day_Curriculum.txt.
+        Expected format: <code>Day 1: Title</code>, then one
+        <code>English | German</code> pair per line.</p>
+        <p class="muted">Importing replaces the curriculum and resets progress
+        after confirmation. No file leaves your device.</p>
+        <label class="file">Import curriculum TXT
+          <input id="textfile" type="file" accept=".txt,text/plain" class="hidden">
+        </label>
+        <label>Campaign start
+          <input id="startdate" type="date" value="${E(S.start)}">
+        </label>
+        <h3>Offline German audio</h3>
+        <p>Only installed local German speech voices are used.
+        Browser support varies. Install a German OS voice if needed;
+        test in airplane mode.</p>
+        <select id="voice" aria-label="German voice"></select>
+        <label>Playback rate
+          <input id="rate" type="range" min=".6" max="1.1" step=".05" value="${S.rate}">
+        </label>
+        <button data-action="testvoice">Test voice</button>
+        <p id="voicestatus" class="muted"></p>
+        <hr>
+        <button class="danger" data-action="reset">Reset learning progress</button>
+      </div>
+      <div class="panel">
+        <h2>The learning contract</h2>
+        <p><b>Retrieve</b> before revealing.
+        <b>Space</b> successful recalls.
+        <b>Repair</b> mistakes.
+        <b>Mix</b> old and new.
+        <b>Transfer</b> phrases into original communication.</p>
+        <p>The spacing algorithm is a simple adaptive heuristic:
+        Again = 2 minutes; first Hard = 12 hours;
+        Good = 1 day; Easy = 3 days.
+        Later intervals grow with your ratings. This is not a calibrated
+        prediction of memory.</p>
+        <p>Introduced ≠ retained ≠ communicatively fluent.
+        XP rewards honest attempts once per phrase per day.
+        No streak penalties, lives, ads or paywalls.</p>
+        <h3>Four-month reality check</h3>
+        <p>A 120-day phrase curriculum is not a complete CEFR course.
+        Add varied audio, unseen reading, real interaction and expert feedback.
+        Review progress weekly; take an independent assessment monthly.
+        Adjust your timeline rather than pretending XP equals B2.</p>
+        <h3>Research foundations</h3>
+        <ul>
+          <li>Roediger & Karpicke (2006), retrieval practice:
+            <a href="https://doi.org/10.1111/j.1467-9280.2006.01693.x"
+            target="_blank" rel="noopener">paper</a>.</li>
+          <li>Cepeda et al. (2006), distributed practice:
+            <a href="https://doi.org/10.1037/0033-2909.132.3.354"
+            target="_blank" rel="noopener">review</a>.</li>
+          <li>Nation (2007), the four strands:
+            <a href="https://doi.org/10.2167/illt039.0"
+            target="_blank" rel="noopener">paper</a>.</li>
+          <li>Dunlosky et al. (2013), learning techniques:
+            <a href="https://doi.org/10.1177/1529100612453266"
+            target="_blank" rel="noopener">review</a>.</li>
+        </ul>
+        <small>These support learning principles—not a guaranteed
+        A1→B2 result or this game's exact intervals. Links need internet;
+        gameplay does not.</small>
+        <h3>Recall checkpoints</h3>
+        <p>${S.checks.length
+          ? S.checks.slice(-6).map(c=>`${E(c.date)} · ${c.score}% of ${c.n}`).join("<br>")
+          : "No checkpoints yet. Run one weekly from Base."}</p>
+      </div>
+    </div>`);
+  fillVoices();
+  $("#textfile").onchange=importText;
+  $("#backupfile").onchange=importBackup;
+  $("#startdate").onchange=e=>{
+    if(e.target.value){S.start=e.target.value;save()}
+  };
+  $("#rate").oninput=e=>{S.rate=+e.target.value;save()};
+  $("#voice").onchange=e=>{S.voice=e.target.value;save()};
+}
+
+async function importText(event){
+  try{
+    const file=event.target.files[0];
+    if(!file) return;
+    if(file.size>3000000) throw Error("File is too large.");
+    const text=await file.text(),data=[];
+    let current;
+    for(const line of text.split(/\r?\n/)){
+      const match=line.trim().match(/^Day\s+(\d+):\s*(.+)$/i);
+      if(match){
+        current={n:+match[1],title:match[2],pairs:[]};
+        data.push(current);
+      } else if(current&&line.includes("|")){
+        const split=line.indexOf("|");
+        const en=line.slice(0,split).trim();
+        const de=line.slice(split+1).trim();
+        if(en&&de) current.pairs.push([en,de]);
+      }
+    }
+    if(!validData(data)) throw Error("Invalid curriculum format.");
+    const count=data.reduce((n,d)=>n+d.pairs.length,0);
+    if(!confirm(`Import ${data.length} days / ${count} phrases and reset progress? Export a backup first if needed.`)) return;
+    S=fresh();S.data=data;S.day=data[0].n;
+    save();go("home");
+    toast("Full curriculum loaded. Ready offline.");
+  }catch(e){toast(e.message)}
+}
+
+function download(name,text){
+  const url=URL.createObjectURL(new Blob([text],{type:"application/json"}));
+  const a=document.createElement("a");
+  a.href=url;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+async function importBackup(event){
+  try{
+    const file=event.target.files[0];
+    if(!file) return;
+    if(file.size>12000000) throw Error("Backup is too large.");
+    const b=JSON.parse(await file.text()),x=b.state;
+    if(b.format!=="night-city-compact-backup-1" || !x || x.v!==1 ||
+       !validData(x.data) ||
+       !Number.isFinite(x.xp) || x.xp<0 ||
+       !Number.isInteger(x.day) || !x.data.some(d=>d.n===x.day) ||
+       !/^\d{4}-\d{2}-\d{2}$/.test(x.start) ||
+       !x.cards || typeof x.cards!=="object" || Array.isArray(x.cards) ||
+       Object.values(x.cards).some(c=>!c ||
+         !Number.isFinite(c.due) ||
+         !Number.isFinite(c.interval) ||
+         !Number.isFinite(c.ease)) ||
+       !Array.isArray(x.checks) ||
+       !x.notes || typeof x.notes!=="object" ||
+       !x.activity || typeof x.activity!=="object" ||
+       !x.awards || typeof x.awards!=="object"){
+      throw Error("Invalid backup.");
+    }
+    if(!confirm("Replace current progress with this backup?")) return;
+    S={...fresh(),...x};save();go("home");
+    toast("Backup restored.");
+  }catch(e){toast("Restore failed: "+e.message)}
+}
+
+function loadVoices(){
+  if("speechSynthesis" in window){
+    voices=speechSynthesis.getVoices().filter(v=>
+      /^de([-_]|$)/i.test(v.lang) && v.localService
+    );
+  }
+  fillVoices();
+}
+function fillVoices(){
+  if(!$("#voice")) return;
+  $("#voice").innerHTML=voices.length
+    ? voices.map(v=>`<option value="${E(v.voiceURI)}">${E(v.name)}</option>`).join("")
+    : "<option>No installed local German voice</option>";
+  if(voices.some(v=>v.voiceURI===S.voice)) $("#voice").value=S.voice;
+  $("#voicestatus").textContent=voices.length
+    ? "Local voice available. Verify it works offline on your device."
+    : "Text challenges work without speech.";
+}
+function speak(text){
+  loadVoices();
+  const voice=voices.find(v=>v.voiceURI===S.voice)||voices[0];
+  if(!voice){
+    toast("No local German voice found. Install one in OS settings or use text.");
+    return;
+  }
+  speechSynthesis.cancel();
+  const utterance=new SpeechSynthesisUtterance(text);
+  utterance.voice=voice;utterance.lang="de-DE";utterance.rate=S.rate;
+  utterance.onerror=()=>toast("Audio unavailable. Text practice still works.");
+  speechSynthesis.speak(utterance);
+}
+function tick(){
+  if($("#timer")){
+    $("#timer").textContent=timer>Date.now()
+      ? `${Math.ceil((timer-Date.now())/1000)} seconds remaining`
+      : "";
+  }
+  if(timer&&Date.now()>=timer){
+    timer=0;
+    toast("Time. Pause, note one improvement, then reuse your German.");
+  }
+}
+setInterval(tick,1000);
+
+document.addEventListener("click",event=>{
+  const b=event.target.closest("button");
+  if(!b||b.disabled) return;
+
+  if(b.dataset.view) return go(b.dataset.view);
+  if(b.dataset.day){
+    S.day=+b.dataset.day;save();go("home");return;
+  }
+  if(b.dataset.token!==undefined){
+    run.chosen.push(+b.dataset.token);drawTiles();return;
+  }
+  if(b.dataset.grade) return grade(b.dataset.grade);
+
+  const action=b.dataset.action;
+  const c=run?.queue[run.i];
+
+  if(["mission","review","checkpoint"].includes(action)) return start(action);
+  if(action==="speak") return speak(c.de);
+
+  if(action==="build"){run.step="build";play();return}
+  if(action==="undo"){run.chosen.pop();drawTiles();return}
+
+  if(action==="buildcheck"){
+    if(run.chosen.length!==run.tokens.length){
+      toast("Use all the tiles.");return;
+    }
+    const attempt=run.chosen.map(i=>run.tokens[i].text).join(" ");
+    if(attempt!==c.de.split(/\s+/).join(" ")){
+      $("#buildmsg").textContent=
+        "Not the model order yet. Check the verb position, undo and retry.";
+      return;
+    }
+    run.step="type";play();return;
+  }
+
+  if(action==="hint"){
+    run.assisted=true;
+    $("#hint").textContent="Starts with: "+c.de.split(/\s+/)[0];
+    return;
+  }
+  if(action==="reveal") return check(true);
+  if(action==="textmode"){
+    c.mode="recall";run.assisted=true;play();return;
+  }
+
+  if(action==="nextday"){
+    const index=S.data.findIndex(d=>d.n===S.day);
+    if(index<S.data.length-1){
+      S.day=S.data[index+1].n;save();go("home");
+    }else{
+      toast("End of loaded curriculum. Revisit due phrases and assess independently.");
+    }
+    return;
+  }
+  if(action==="savenote") return saveNote();
+  if(action==="speaktimer"){
+    timer=Date.now()+(band()+1)*60000;tick();return;
+  }
+  if(action==="focus"){
+    timer=Date.now()+25*60000;
+    tick();toast("Focus block started. Quality first.");return;
+  }
+  if(action==="testvoice"){
+    return speak("Guten Morgen! Heute lerne ich Deutsch. Schritt für Schritt.");
+  }
+  if(action==="export"){
+    return download("deutsch-backup-"+today()+".json",JSON.stringify({
+      format:"night-city-compact-backup-1",state:S
+    }));
+  }
+  if(action==="reset"&&confirm("Reset learning progress? Curriculum stays. Export first if needed.")){
+    const data=S.data;
+    S=fresh();S.data=data;S.day=data[0].n;
+    save();go("home");
+  }
+});
+
+window.addEventListener("beforeunload",event=>{
+  if(run || (view==="lab"&&dirtyDraft())){
+    event.preventDefault();event.returnValue="";
+  }
+});
+
+if("speechSynthesis" in window){
+  speechSynthesis.onvoiceschanged=loadVoices;
+  loadVoices();
+}
+render();
+</script>
+</body>
+</html>
